@@ -14,10 +14,35 @@ $(function() {
   }
 
   var lsKey = 'swagger_accessToken';
-  $.getJSON('config.json', function(config) {
-    log(config);
-    loadSwaggerUi(config);
-  });
+
+  window.check = function (event) {
+    event.preventDefault();
+    var username = $('#username').val();
+    var password = $('#password').val();
+    $.ajax({
+      type: "POST",
+      url: '/api/v1/users/verify_api_access',
+      data: {username: username, password: password},
+      success: function (data){
+        if (data === true) {
+          $('#api_selector').removeClass('display_none');
+          $('#login').addClass('display_none');
+          $('#main').removeClass('display_none');
+          start();
+        }
+        else {
+          alert('Wrong Creds');
+        }
+      }
+    });
+  }
+
+  function start() {
+    $.getJSON('config.json', function(config) {
+      log(config);
+      loadSwaggerUi(config);
+    });
+  }
 
   var accessToken;
   function loadSwaggerUi(config) {
